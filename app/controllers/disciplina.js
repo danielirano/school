@@ -23,7 +23,30 @@ module.exports = function(app){
         disciplina.find().populate('curso').populate('professor').exec().then(
             //em caso de sucesso
             function(disciplinas) {
-                res.status(200).json(disciplinas);
+                const response = disciplinas.map(dis => { // metado map ele percorre o array e organiza seus atributos.
+                    return {
+                     id: dis._id,
+                      nome: dis.nome,
+                      ativo: dis.ativo,
+                      cargaHoraria: dis.cargaHoraria,
+                      valorMensalidade: dis.valorMensalidade,
+                      professor: {
+                          id: dis.professor._id,
+                          nome: dis.professor.nome,
+                          ativo: dis.professor.ativo,
+                          email: dis.professor.email,
+                          dataNascimento: dis.professor.dataNascimento,
+                      },
+                      curso:{
+                          id: dis.curso._id,
+                          nome: dis.curso.nome,
+                          ativo: dis.curso.ativo,
+                          cargaHoraria: dis.curso.cargaHoraria,
+                          valorMensalidade: dis.curso.valorMensalidade,
+                      },
+                    }
+                  })
+                res.status(200).json(response);
             },
             //em caso de erro
             function(erro) {
@@ -63,14 +86,36 @@ module.exports = function(app){
     //Retorna somente um disciplina
     controller.obtemDisciplina = function(req, res) {
         var _id = req.params.id;
-        disciplina.findById(_id).exec().then(
+        disciplina.findById(_id).populate('curso').populate('professor').exec().then(
             //sucesso
             function(disciplina) {
                 if(!disciplina) {
                     res.status(404).end();
                 }
                 else {
-                    res.status(200).json(disciplina);
+                    const response = {
+                        id: disciplina._id,
+                        nome: disciplina.nome,
+                        ativo: disciplina.ativo,
+                        cargaHoraria: disciplina.cargaHoraria,
+                        valorMensalidade: disciplina.valorMensalidade,
+                        professor: {
+                            id: disciplina.professor._id,
+                            nome: disciplina.professor.nome,
+                            ativo: disciplina.professor.ativo,
+                            email: disciplina.professor.email,
+                            dataNascimento: disciplina.professor.dataNascimento,
+                        },
+                        curso:{
+                            id: disciplina.curso._id,
+                            nome: disciplina.curso.nome,
+                            ativo: disciplina.curso.ativo,
+                            cargaHoraria: disciplina.curso.cargaHoraria,
+                            valorMensalidade: disciplina.curso.valorMensalidade,
+                        },
+                    }
+
+                    res.status(200).json(response);
                 }
             }, 
             //erro
