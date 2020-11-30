@@ -1,12 +1,12 @@
 const disciplina = require("../models/disciplina");
 
 module.exports = function(app){
-    /// cria a variável que vai conter as funções da controller
+    
     var controller = {};
-    // cria variável que irá acessar a model
+    
     var disciplina = app.models.disciplina;
 
-    // cria a função de cadastrar disciplina
+    
     controller.salvarDisciplina = function(req, res) {
         disciplina.create(req.body).then(
             function(disciplina) {
@@ -17,13 +17,13 @@ module.exports = function(app){
             }
         );
     }
-     // função que retorna os disciplinaes cadastrados
+    
      controller.listaDisciplinas = function(req, res) {
-        // executa um find para retornar os disciplinaes
+    
         disciplina.find().populate('curso').populate('professor').exec().then(
-            //em caso de sucesso
+    
             function(disciplinas) {
-                const response = disciplinas.map(dis => { // metado map ele percorre o array e organiza seus atributos.
+                const response = disciplinas.map(dis => {
                     return {
                      id: dis._id,
                       nome: dis.nome,
@@ -48,7 +48,7 @@ module.exports = function(app){
                   })
                 res.status(200).json(response);
             },
-            //em caso de erro
+            
             function(erro) {
                 console.error(erro);
                 res.status(500).json(erro);
@@ -56,7 +56,7 @@ module.exports = function(app){
         );
     }
 
-    // atualiza disciplinaes já cadastrados
+    
     controller.alteraDisciplina = function(req, res) {
         var _id = req.body._id;
         disciplina.findByIdAndUpdate(_id, req.body).exec().then(
@@ -68,26 +68,26 @@ module.exports = function(app){
             }
         );
     }
-    // remove disciplinaes cadastrados
+    
     controller.removeDisciplina = function(req, res) {
             var _id = req.params.id;
             disciplina.remove({"_id": _id}).exec().then(
-                //em caso de sucesso
+                
                 function(disciplina) {
                     res.status(204).end();
                 },
-                //em caso de erro
+                
                 function(erro) {
                     console.error(erro);
                     res.status(500).json(erro);
                 }
             );
         }
-    //Retorna somente um disciplina
+    
     controller.obtemDisciplina = function(req, res) {
         var _id = req.params.id;
         disciplina.findById(_id).populate('curso').populate('professor').exec().then(
-            //sucesso
+            
             function(disciplina) {
                 if(!disciplina) {
                     res.status(404).end();
@@ -118,7 +118,7 @@ module.exports = function(app){
                     res.status(200).json(response);
                 }
             }, 
-            //erro
+            
             function(erro) {
                 console.error(erro);
                 res.status(500).json(erro);
